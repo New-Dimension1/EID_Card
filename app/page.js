@@ -49,18 +49,18 @@ export default function Home() {
       canvas.width = image.width;
       canvas.height = image.height;
       ctx.drawImage(image, 0, 0);
-      ctx.font = "100px 'Alexandria', sans-serif";
+      ctx.font = cardType === "2" ? "80px 'Alexandria', sans-serif" : "160px 'Alexandria', sans-serif" ;
       ctx.fillStyle = "#ffffff";
       ctx.textAlign = "center";
 
-      const textX = canvas.width / Data.dx;
-      const textY = canvas.height - 500;
-      const positionY = textY + 120;
+     const textX = canvas.width / Data.dx;
+const textY = cardType === "2" ? canvas.height * 0.65 : canvas.height * 0.80;
+const positionY = cardType === "2" ? textY + canvas.height * 0.03: textY + canvas.height * 0.02;
 
       setTimeout(() => {
         ctx.fillText(name || " ", textX, textY);
         if (position) {
-          ctx.font = "70px 'Alexandria', sans-serif";
+          ctx.font = cardType === "2" ? "80px 'Alexandria', sans-serif": "130px 'Alexandria', sans-serif" ;
           ctx.fillText(position, textX, positionY);
         }
         const link = document.createElement("a");
