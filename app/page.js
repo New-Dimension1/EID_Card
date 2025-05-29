@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 export default function Home() {
   const [name, setName] = useState("");
   const [position, setPosition] = useState("");
-  const [checkCard, setCheckCard] = useState(false);
   const [cardType, setCardType] = useState("1");
   const canvasRef = useRef(null);
   const [isFocused, setIsFocused] = useState(false);
@@ -27,6 +26,14 @@ export default function Home() {
     fetchData();
   }, []);
 
+  const positionsByType = {
+  "1": { dx: 2, dy: 0.67, dy2: 0.70 },
+  "2": { dx: 2, dy: 0.67, dy2: 0.70 },
+  "3": { dx: 2, dy: 0.47, dy2: 0.50 },
+  "4": { dx: 2, dy: 0.77, dy2: 0.80 },
+};
+
+
   const handleDownload = (e) => {
     e.preventDefault();
     if (!cardType) {
@@ -39,28 +46,25 @@ export default function Home() {
     const image = new Image();
     image.crossOrigin = "anonymous";
 
-    if (checkCard) {
-      image.src = cardType === "2" ? "/images/eid_not_2.jpg" : "/images/eid_not_1.jpg";
-    } else {
-      image.src = cardType === "2" ? "/images/eid_2.jpg" : "/images/eid_1.jpg";
-    }
+
 
     image.onload = () => {
       canvas.width = image.width;
       canvas.height = image.height;
       ctx.drawImage(image, 0, 0);
-      ctx.font = cardType === "2" ? "80px 'Alexandria', sans-serif" : "160px 'Alexandria', sans-serif" ;
+      ctx.font = "130px 'Alexandria', sans-serif" 
       ctx.fillStyle = "#ffffff";
       ctx.textAlign = "center";
 
-     const textX = canvas.width / Data.dx;
-const textY = cardType === "2" ? canvas.height * 0.65 : canvas.height * 0.80;
-const positionY = cardType === "2" ? textY + canvas.height * 0.03: textY + canvas.height * 0.02;
+    const config = positionsByType[cardType];
+const textX = canvas.width / config.dx;
+const textY = canvas.height * config.dy;
+const positionY = canvas.height * config.dy2;
 
       setTimeout(() => {
         ctx.fillText(name || " ", textX, textY);
         if (position) {
-          ctx.font = cardType === "2" ? "80px 'Alexandria', sans-serif": "130px 'Alexandria', sans-serif" ;
+          ctx.font = "90px 'Alexandria', sans-serif" ;
           ctx.fillText(position, textX, positionY);
         }
         const link = document.createElement("a");
@@ -69,6 +73,7 @@ const positionY = cardType === "2" ? textY + canvas.height * 0.03: textY + canva
         link.click();
       }, 100);
     };
+      image.src = `/images/eid_${cardType}.jpg`;
   };
 
   return (
@@ -146,29 +151,18 @@ const positionY = cardType === "2" ? textY + canvas.height * 0.03: textY + canva
             </label>
           </motion.div>
 
-          {/* اختيار بطاقة */}
-          <motion.div className="flex items-center gap-2" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5, duration: 0.8 }}>
-            <input
-              className="accent-[#249770] cursor-pointer"
-              type="checkbox"
-              name="CheckCard"
-              id="CheckCard"
-              checked={checkCard}
-              onChange={(e) => setCheckCard(e.target.checked)}
-            />
-            <label htmlFor="CheckCard" className="text-[#006EAB] text-sm sm:text-base">البطاقة غير الرسمية</label>
-          </motion.div>
+       
 
           <hr className="w-full my-4 h-[2px] bg-gradient-to-r from-white via-[#249770]/60 to-white border-0" />
 
           <h3 className="text-[#006EAB] text-right text-base sm:text-lg font-bold">اختر بطاقة</h3>
-          <motion.div className="flex flex-wrap justify-center gap-4 sm:gap-6" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6, duration: 0.8 }}>
-            {["1", "2"].map((type) => (
+          <motion.div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 justify-center gap-2 " initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6, duration: 0.8 }}>
+            {["1", "2", "3", "4"].map((type) => (
               <motion.label
                 key={type}
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.95 }}
-                className={`cursor-pointer rounded-xl border-4 transition-all duration-500 w-32 sm:w-40 md:w-52 lg:w-64 overflow-hidden shadow  ${
+                className={`cursor-pointer rounded-xl border-4 transition-all duration-500 h-96  overflow-hidden shadow  ${
                   cardType === type ? "border-[#249770] shadow-2xl" : "border-gray-300"
                 }`}
                 onClick={() => setCardType(type)}
