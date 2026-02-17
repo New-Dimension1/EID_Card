@@ -127,9 +127,9 @@ const positionY = canvas.height * config.dy2;
         <h1 className="text-xl md:text-2xl lg:text-3xl font-extrabold text-[#005482] mb-4 text-center leading-normal">
         يتقدم رئيس وأعضاء مجلس الإدارة والأمين العام لاتحاد الغرف التجارية السعودية وجميع منسوبيها بتهنئتكم بحلول شهر رمضان المبارك، نسأل الله أن يجعلنا من صوّامه وقوّامه   </h1>
 
-        <p className="text-[#52677c] text-center mb-4 max-w-2xl mx-auto leading-7 text-sm sm:text-base">
+        {/* <p className="text-[#52677c] text-center mb-4 max-w-2xl mx-auto leading-7 text-sm sm:text-base">
           نسأل الله أن يعيده علينا وعليكم باليمن والبركات، وكل عام وأنتم بخير.
-        </p>
+        </p> */}
 
         <form onSubmit={handleDownload} className="space-y-5">
           {/* الاسم */}
