@@ -27,7 +27,7 @@ export default function Home() {
     fetchData();
   }, []);
 
-const GAP = 0.02;
+const GAP = 0.03;
 
 const positionsByType = {
   "1": { dx: 2, dy: 0.47, dy2: 0.47 + GAP, color: "#ffffff" },
@@ -57,7 +57,7 @@ const positionsByType = {
       canvas.height = image.height;
       ctx.drawImage(image, 0, 0);
       const config = positionsByType[cardType];
-      ctx.font = "150px 'Tajawal', sans-serif" 
+      ctx.font = "130px 'Tajawal', sans-serif" 
       ctx.fillStyle = config.color;
       ctx.textAlign = "center";
 
@@ -69,7 +69,7 @@ const positionY = canvas.height * config.dy2;
       setTimeout(() => {
         ctx.fillText(name || " ", textX, textY);
         if (position) {
-          ctx.font = "110px 'Tajawal', sans-serif" ;
+          ctx.font = "100px 'Tajawal', sans-serif" ;
           ctx.fillText(position, textX, positionY);
         }
         const link = document.createElement("a");
@@ -96,6 +96,24 @@ const positionY = canvas.height * config.dy2;
       animate={{ opacity: 1 }}
       transition={{ duration: 2.5 }}
     >
+      {/* Loader Overlay */}
+      {isLoading && (
+        <motion.div
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+        >
+          <div className="bg-white rounded-2xl p-8 flex flex-col items-center gap-4 shadow-2xl">
+            <svg className="animate-spin h-16 w-16 text-[#006EAB]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <p className="text-[#006EAB] text-lg font-bold">جاري تحميل الصورة...</p>
+          </div>
+        </motion.div>
+      )}
+
       <motion.div
         className="bg-white m-10 p-4 sm:p-6 md:p-8 rounded-lg shadow-lg w-full  max-w-xs md:max-w-2xl lg:max-w-4xl"
         initial={{ scale: 0.8 }}
@@ -187,9 +205,12 @@ const positionY = canvas.height * config.dy2;
           {/* Download Button */}
           <motion.button
             type="submit"
-            className="w-full bg-[#006EAB] text-white py-3 rounded-lg hover:bg-[#006EAB]/90 text-sm sm:text-base transition-all duration-500"
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.95 }}
+            disabled={isLoading}
+            className={`w-full bg-[#006EAB] text-white py-3 rounded-lg hover:bg-[#006EAB]/90 text-sm sm:text-base transition-all duration-500 font-bold ${
+              isLoading ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+            whileHover={{ scale: isLoading ? 1 : 1.03 }}
+            whileTap={{ scale: isLoading ? 1 : 0.95 }}
           >
             تحميل البطاقة
           </motion.button>
