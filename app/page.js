@@ -10,6 +10,7 @@ export default function Home() {
   const [isFocused, setIsFocused] = useState(false);
   const [isPositionFocused, setIsPositionFocused] = useState(false);
   const [Data, setData] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -26,11 +27,13 @@ export default function Home() {
     fetchData();
   }, []);
 
-  const positionsByType = {
-  "1": { dx: 2, dy: 0.67, dy2: 0.70 },
-  "2": { dx: 2, dy: 0.67, dy2: 0.70 },
-  "3": { dx: 2, dy: 0.47, dy2: 0.50 },
-  "4": { dx: 2, dy: 0.77, dy2: 0.80 },
+const GAP = 0.02;
+
+const positionsByType = {
+  "1": { dx: 2, dy: 0.47, dy2: 0.47 + GAP, color: "#ffffff" },
+  "2": { dx: 2, dy: 0.77, dy2: 0.77 + GAP, color: "#000000" },
+  "3": { dx: 3, dy: 0.67, dy2: 0.67 + GAP, color: "#ffffff" },
+  "4": { dx: 2, dy: 0.77, dy2: 0.77 + GAP, color: "#ffffff" },
 };
 
 
@@ -41,6 +44,7 @@ export default function Home() {
       return;
     }
 
+    setIsLoading(true);
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
     const image = new Image();
@@ -52,11 +56,12 @@ export default function Home() {
       canvas.width = image.width;
       canvas.height = image.height;
       ctx.drawImage(image, 0, 0);
-      ctx.font = "130px 'Alexandria', sans-serif" 
-      ctx.fillStyle = "#ffffff";
+      const config = positionsByType[cardType];
+      ctx.font = "150px 'Tajawal', sans-serif" 
+      ctx.fillStyle = config.color;
       ctx.textAlign = "center";
 
-    const config = positionsByType[cardType];
+  
 const textX = canvas.width / config.dx;
 const textY = canvas.height * config.dy;
 const positionY = canvas.height * config.dy2;
@@ -64,16 +69,23 @@ const positionY = canvas.height * config.dy2;
       setTimeout(() => {
         ctx.fillText(name || " ", textX, textY);
         if (position) {
-          ctx.font = "90px 'Alexandria', sans-serif" ;
+          ctx.font = "110px 'Tajawal', sans-serif" ;
           ctx.fillText(position, textX, positionY);
         }
         const link = document.createElement("a");
         link.href = canvas.toDataURL("image/png");
         link.download = "eid_greeting.png";
         link.click();
+        setIsLoading(false);
       }, 100);
     };
-      image.src = `/images/eid_${cardType}.jpg`;
+
+    image.onerror = () => {
+      setIsLoading(false);
+      alert("حدث خطأ في تحميل الصورة");
+    };
+
+      image.src = `/images/eid_${cardType}.png`;
   };
 
   return (
@@ -85,7 +97,7 @@ const positionY = canvas.height * config.dy2;
       transition={{ duration: 2.5 }}
     >
       <motion.div
-        className="bg-white my-10 p-4 sm:p-6 md:p-8 rounded-lg shadow-lg w-full  max-w-sm md:max-w-2xl lg:max-w-4xl"
+        className="bg-white m-10 p-4 sm:p-6 md:p-8 rounded-lg shadow-lg w-full  max-w-xs md:max-w-2xl lg:max-w-4xl"
         initial={{ scale: 0.8 }}
         animate={{ scale: 1 }}
         transition={{ duration: 1.5 }}
@@ -95,8 +107,7 @@ const positionY = canvas.height * config.dy2;
         </div>
 
         <h1 className="text-xl md:text-2xl lg:text-3xl font-extrabold text-[#005482] mb-4 text-center leading-normal">
-          يتقدم رئيس وأعضاء مجلس الإدارة والأمين العام لاتحاد الغرف التجارية السعودية وجميع منسوبيها بتهنئتكم بحلول عيد الأضحى المبارك
-        </h1>
+        يتقدم رئيس وأعضاء مجلس الإدارة والأمين العام لاتحاد الغرف التجارية السعودية وجميع منسوبيها بتهنئتكم بحلول شهر رمضان المبارك، نسأل الله أن يجعلنا من صوّامه وقوّامه   </h1>
 
         <p className="text-[#52677c] text-center mb-4 max-w-2xl mx-auto leading-7 text-sm sm:text-base">
           نسأل الله أن يعيده علينا وعليكم باليمن والبركات، وكل عام وأنتم بخير.
@@ -156,22 +167,24 @@ const positionY = canvas.height * config.dy2;
           <hr className="w-full my-4 h-[2px] bg-gradient-to-r from-white via-[#249770]/60 to-white border-0" />
 
           <h3 className="text-[#006EAB] text-right text-base sm:text-lg font-bold">اختر بطاقة</h3>
-          <motion.div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 justify-center gap-2 " initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6, duration: 0.8 }}>
+          <motion.div className="grid grid-cols-2 lg:grid-cols-4 gap-2" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6, duration: 0.8 }}>
             {["1", "2", "3", "4"].map((type) => (
               <motion.label
                 key={type}
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.95 }}
-                className={`cursor-pointer rounded-xl border-4 transition-all duration-500 h-96  overflow-hidden shadow  ${
+                className={`cursor-pointer rounded-xl border-4 transition-all duration-500 h-auto  overflow-hidden shadow  ${
                   cardType === type ? "border-[#249770] shadow-2xl" : "border-gray-300"
                 }`}
                 onClick={() => setCardType(type)}
               >
-                <img className="w-full h-full object-cover" src={`/images/eid_${type}.jpg`} alt={`Card ${type}`} />
+                <img 
+                className="w-full h-full object-cover" src={`/images/eid_${type}.png`} alt={`Card ${type}`} />
               </motion.label>
             ))}
           </motion.div>
 
+          {/* Download Button */}
           <motion.button
             type="submit"
             className="w-full bg-[#006EAB] text-white py-3 rounded-lg hover:bg-[#006EAB]/90 text-sm sm:text-base transition-all duration-500"
